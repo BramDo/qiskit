@@ -1,15 +1,3 @@
-// This code is part of Qiskit.
-//
-// (C) Copyright IBM 2022
-//
-// This code is licensed under the Apache License, Version 2.0. You may
-// obtain a copy of this license in the LICENSE.txt file in the root directory
-// of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
-//
-// Any modifications or derivative works of this code must retain this
-// copyright notice, and modified files need to carry a notice indicating
-// that they have been altered from the originals.
-
 use pyo3::intern;
 use pyo3::prelude::*;
 use pyo3::Python;
@@ -54,6 +42,7 @@ pub fn get_matrix_from_inst(py: Python, inst: &PackedInstruction) -> PyResult<Ar
 }
 
 /// Return the matrix Operator resulting from a block of Instructions.
+#[pyfunction]
 pub fn blocks_to_matrix(
     py: Python,
     dag: &DAGCircuit,
@@ -155,4 +144,10 @@ pub fn change_basis(matrix: ArrayView2<Complex64>) -> Array2<Complex64> {
         trans_matrix.swap([1, index], [2, index]);
     }
     trans_matrix
+}
+
+#[pymodule]
+fn convert_2q_block_matrix(py: Python, m: &PyModule) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(blocks_to_matrix, m)?)?;
+    Ok(())
 }

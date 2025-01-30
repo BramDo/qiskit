@@ -88,3 +88,10 @@ Other:
    exceptions
    qobj
    utils
+
+Public Functions:
+
+.. toctree::
+   :maxdepth: 1
+
+   blocks_to_matrix
