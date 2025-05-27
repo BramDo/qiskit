@@ -50,7 +50,7 @@ type Instruction = (
 /// Returns:
 ///     The ``CircuitData`` to construct the Pauli feature map.
 #[pyfunction]
-#[pyo3(signature = (feature_dimension, parameters, *, reps=1, entanglement=None, paulis=None, alpha=2.0, insert_barriers=false, data_map_func=None))]
+#[pyo3(signature = (feature_dimension, parameters, *, reps=1, entanglement=None, paulis=None, alpha=2.0, insert_barriers=false, phase_gate_for_paulis=true, data_map_func=None))]
 #[allow(clippy::too_many_arguments)]
 pub fn pauli_feature_map(
     py: Python,
@@ -61,6 +61,7 @@ pub fn pauli_feature_map(
     paulis: Option<&Bound<PySequence>>,
     alpha: f64,
     insert_barriers: bool,
+    phase_gate_for_paulis: bool,
     data_map_func: Option<&Bound<PyAny>>,
 ) -> PyResult<CircuitData> {
     // normalize the Pauli strings
@@ -113,6 +114,7 @@ pub fn pauli_feature_map(
             &pauli_strings,
             entanglement,
             data_map_func,
+            phase_gate_for_paulis,
         )?;
         packed_insts.extend(evo_layer);
 
@@ -152,6 +154,7 @@ fn _get_evolution_layer<'a>(
     pauli_strings: &'a [String],
     entanglement: &'a Bound<PyAny>,
     data_map_func: Option<&'a Bound<PyAny>>,
+    phase_gate_for_paulis: bool,
 ) -> PyResult<Vec<Instruction>> {
     let mut insts: Vec<Instruction> = Vec::new();
 
@@ -182,7 +185,7 @@ fn _get_evolution_layer<'a>(
                 pauli,
                 indices.into_iter().rev().collect(),
                 multiply_param(&angle, alpha, py),
-                true,
+                phase_gate_for_paulis,
                 false,
             );
             insts.extend(evo);
