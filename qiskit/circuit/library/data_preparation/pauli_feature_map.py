@@ -249,7 +249,7 @@ def z_feature_map(
         data_map_func=data_map_func,
         parameter_prefix=parameter_prefix,
         insert_barriers=insert_barriers,
-        phase_gate_for_paulis=not use_rzz,
+        use_phase=not use_rzz,
         name=name,
     )
 
