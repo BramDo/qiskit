@@ -166,7 +166,7 @@ def pauli_feature_map(
             data_map_func=data_map_func,
             alpha=alpha,
             insert_barriers=insert_barriers,
-            phase_gate_for_paulis=use_phase,
+            use_phase=use_phase,
         ),
         name=name,
     )
@@ -184,6 +184,7 @@ def z_feature_map(
     data_map_func: Callable[[Parameter], ParameterExpression] | None = None,
     parameter_prefix: str = "x",
     insert_barriers: bool = False,
+    #use_phase: bool = True, 
     name: str = "ZFeatureMap",
 ) -> QuantumCircuit:
     """The first order Pauli Z-evolution circuit.
@@ -249,7 +250,6 @@ def z_feature_map(
         data_map_func=data_map_func,
         parameter_prefix=parameter_prefix,
         insert_barriers=insert_barriers,
-        use_phase=not use_rzz,
         name=name,
     )
 
@@ -265,6 +265,7 @@ def zz_feature_map(
     parameter_prefix: str = "x",
     insert_barriers: bool = False,
     use_rzz: bool = False,
+    use_phase: bool = True,
     name: str = "ZZFeatureMap",
 ) -> QuantumCircuit:
     r"""Second-order Pauli-Z evolution circuit.
@@ -330,6 +331,7 @@ def zz_feature_map(
         data_map_func=data_map_func,
         parameter_prefix=parameter_prefix,
         insert_barriers=insert_barriers,
+        use_phase=not use_rzz if use_rzz is not None else use_phase,
         name=name,
     )
 
