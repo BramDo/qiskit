@@ -18,6 +18,7 @@ from typing import Optional, Union
 
 import numpy as np
 from qiskit.circuit import QuantumCircuit, CircuitInstruction
+from qiskit.utils.deprecation import deprecate_func
 from qiskit.circuit.library.generalized_gates import PermutationGate, UnitaryGate
 from qiskit._accelerate.circuit_library import quantum_volume as qv_rs
 
@@ -58,6 +59,11 @@ class QuantumVolume(QuantumCircuit):
     [`arXiv:1811.12926 <https://arxiv.org/abs/1811.12926>`_]
     """
 
+    @deprecate_func(
+        since="2.2",
+        additional_msg="Use qiskit.circuit.library.quantum_volume instead.",
+        pending=True,
+    )
     def __init__(
         self,
         num_qubits: int,

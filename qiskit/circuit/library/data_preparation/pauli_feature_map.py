@@ -277,7 +277,7 @@ def zz_feature_map(
 
     Examples:
 
-        >>> from qiskit.circuit.library import ZZFeatureMap
+        >>> from qiskit.circuit.library import zz_feature_map
         >>> prep = zz_feature_map(2, reps=1)
         >>> print(prep)
              ┌───┐┌─────────────┐
@@ -363,8 +363,8 @@ class PauliFeatureMap(NLocal):
 
     The circuit contains ``reps`` repetitions of this transformation.
 
-    Please refer to :class:`.ZFeatureMap` for the case of single-qubit Pauli-:math:`Z` rotations
-    and to :class:`.ZZFeatureMap` for the single- and two-qubit Pauli-:math:`Z` rotations.
+    Please refer to :func:`.z_feature_map` for the case of single-qubit Pauli-:math:`Z` rotations
+    and to :func:`.zz_feature_map` for the single- and two-qubit Pauli-:math:`Z` rotations.
 
     Examples:
 

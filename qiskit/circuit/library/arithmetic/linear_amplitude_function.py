@@ -15,6 +15,7 @@
 from __future__ import annotations
 import numpy as np
 from qiskit.circuit import QuantumCircuit, Gate
+from qiskit.utils.deprecation import deprecate_func
 
 from .piecewise_linear_pauli_rotations import (
     PiecewiseLinearPauliRotations,
@@ -77,6 +78,11 @@ class LinearAmplitudeFunction(QuantumCircuit):
              `arXiv:2005.10780 <http://arxiv.org/abs/2005.10780>`_
     """
 
+    @deprecate_func(
+        since="2.2",
+        additional_msg="Use qiskit.circuit.library.LinearAmplitudeFunctionGate instead.",
+        pending=True,
+    )
     def __init__(
         self,
         num_state_qubits: int,

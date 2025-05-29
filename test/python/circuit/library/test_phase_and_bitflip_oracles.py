@@ -35,7 +35,7 @@ class TestPhaseOracleAndGate(QiskitTestCase):
     @unpack
     def test_evaluate_bitstring(self, expression, input_bitstring, expected):
         """PhaseOracle(...).evaluate_bitstring"""
-        oracle = PhaseOracle(expression)
+        oracle = PhaseOracleGate(expression)
         result = oracle.evaluate_bitstring(input_bitstring)
         self.assertEqual(result, expected)
 
@@ -50,13 +50,12 @@ class TestPhaseOracleAndGate(QiskitTestCase):
     @unpack
     def test_statevector(self, expression, truth_table):
         """Circuit generation"""
-        for use_gate in [True, False]:
-            oracle = PhaseOracleGate(expression) if use_gate else PhaseOracle(expression)
-            num_qubits = oracle.num_qubits
-            circuit = QuantumCircuit(num_qubits)
-            circuit.h(range(num_qubits))
-            circuit.compose(oracle, inplace=True)
-            statevector = Statevector.from_instruction(circuit)
+        oracle = PhaseOracleGate(expression)
+        num_qubits = oracle.num_qubits
+        circuit = QuantumCircuit(num_qubits)
+        circuit.h(range(num_qubits))
+        circuit.compose(oracle, inplace=True)
+        statevector = Statevector.from_instruction(circuit)
 
             valid_state = -1 / sqrt(2**num_qubits)
             invalid_state = 1 / sqrt(2**num_qubits)
@@ -68,9 +67,8 @@ class TestPhaseOracleAndGate(QiskitTestCase):
 
             expected_invalid = [state not in good_states for state in states]
             result_invalid = [isclose(statevector.data[state], invalid_state) for state in states]
-            with self.subTest(use_gate=use_gate):
-                self.assertListEqual(expected_valid, result_valid)
-                self.assertListEqual(expected_invalid, result_invalid)
+        self.assertListEqual(expected_valid, result_valid)
+        self.assertListEqual(expected_invalid, result_invalid)
 
     @data(
         ("((A & C) | (B & D)) & ~(C & D)", None, [3, 7, 12, 13]),
@@ -79,17 +77,12 @@ class TestPhaseOracleAndGate(QiskitTestCase):
     @unpack
     def test_variable_order(self, expression, var_order, good_states):
         """Circuit generation"""
-        for use_gate in [True, False]:
-            oracle = (
-                PhaseOracleGate(expression, var_order=var_order)
-                if use_gate
-                else PhaseOracle(expression, var_order=var_order)
-            )
-            num_qubits = oracle.num_qubits
-            circuit = QuantumCircuit(num_qubits)
-            circuit.h(range(num_qubits))
-            circuit.compose(oracle, inplace=True)
-            statevector = Statevector.from_instruction(circuit)
+        oracle = PhaseOracleGate(expression, var_order=var_order)
+        num_qubits = oracle.num_qubits
+        circuit = QuantumCircuit(num_qubits)
+        circuit.h(range(num_qubits))
+        circuit.compose(oracle, inplace=True)
+        statevector = Statevector.from_instruction(circuit)
 
             valid_state = -1 / sqrt(2**num_qubits)
             invalid_state = 1 / sqrt(2**num_qubits)
@@ -100,9 +93,8 @@ class TestPhaseOracleAndGate(QiskitTestCase):
 
             expected_invalid = [state not in good_states for state in states]
             result_invalid = [isclose(statevector.data[state], invalid_state) for state in states]
-            with self.subTest(use_gate=use_gate):
-                self.assertListEqual(expected_valid, result_valid)
-                self.assertListEqual(expected_invalid, result_invalid)
+        self.assertListEqual(expected_valid, result_valid)
+        self.assertListEqual(expected_invalid, result_invalid)
 
 
 @ddt
