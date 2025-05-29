@@ -54,10 +54,13 @@ class PiecewisePolynomialPauliRotations(FunctionalPauliRotations):
     Examples:
         >>> from qiskit import QuantumCircuit
         >>> from qiskit.circuit.library.arithmetic.piecewise_polynomial_pauli_rotations import\
-        ... PiecewisePolynomialPauliRotations
-        >>> qubits, breakpoints, coeffs = (2, [0, 2], [[0, -1.2],[-1, 1, 3]])
-        >>> poly_r = PiecewisePolynomialPauliRotations(num_state_qubits=qubits,
-        ...breakpoints=breakpoints, coeffs=coeffs)
+        ... PiecewisePolynomialPauliRotationsGate
+        >>> qubits, breakpoints, coeffs = (2, [0, 2], [[0, -1.2], [-1, 1, 3]])
+        >>> poly_r = PiecewisePolynomialPauliRotationsGate(
+        ...     num_state_qubits=qubits,
+        ...     breakpoints=breakpoints,
+        ...     coeffs=coeffs,
+        ... )
         >>>
         >>> qc = QuantumCircuit(poly_r.num_qubits)
         >>> qc.h(list(range(qubits)));
@@ -338,10 +341,13 @@ class PiecewisePolynomialPauliRotationsGate(Gate):
     Examples:
         >>> from qiskit import QuantumCircuit
         >>> from qiskit.circuit.library.arithmetic.piecewise_polynomial_pauli_rotations import\
-        ... PiecewisePolynomialPauliRotations
-        >>> qubits, breakpoints, coeffs = (2, [0, 2], [[0, -1.2],[-1, 1, 3]])
-        >>> poly_r = PiecewisePolynomialPauliRotations(num_state_qubits=qubits,
-        ...breakpoints=breakpoints, coeffs=coeffs)
+        ... PiecewisePolynomialPauliRotationsGate
+        >>> qubits, breakpoints, coeffs = (2, [0, 2], [[0, -1.2], [-1, 1, 3]])
+        >>> poly_r = PiecewisePolynomialPauliRotationsGate(
+        ...     num_state_qubits=qubits,
+        ...     breakpoints=breakpoints,
+        ...     coeffs=coeffs,
+        ... )
         >>>
         >>> qc = QuantumCircuit(poly_r.num_qubits)
         >>> qc.h(list(range(qubits)));

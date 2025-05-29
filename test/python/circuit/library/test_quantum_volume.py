@@ -15,7 +15,6 @@
 import unittest
 
 from test.utils.base import QiskitTestCase
-from qiskit.circuit.library import QuantumVolume
 from qiskit.circuit.library.quantum_volume import quantum_volume
 
 
@@ -24,16 +23,16 @@ class TestQuantumVolumeLibrary(QiskitTestCase):
 
     def test_qv_seed_reproducibility(self):
         """Test qv circuit."""
-        left = QuantumVolume(4, 4, seed=28, classical_permutation=False)
-        right = QuantumVolume(4, 4, seed=28, classical_permutation=False)
+        left = quantum_volume(4, 4, seed=28)
+        right = quantum_volume(4, 4, seed=28)
         self.assertEqual(left, right)
 
-        left = QuantumVolume(4, 4, seed=3, classical_permutation=True)
-        right = QuantumVolume(4, 4, seed=3, classical_permutation=True)
+        left = quantum_volume(4, 4, seed=3)
+        right = quantum_volume(4, 4, seed=3)
         self.assertEqual(left, right)
 
-        left = QuantumVolume(4, 4, seed=2024, flatten=True)
-        right = QuantumVolume(4, 4, seed=2024, flatten=True)
+        left = quantum_volume(4, 4, seed=2024)
+        right = quantum_volume(4, 4, seed=2024)
         self.assertEqual(left, right)
 
     def test_qv_function_seed_reproducibility(self):

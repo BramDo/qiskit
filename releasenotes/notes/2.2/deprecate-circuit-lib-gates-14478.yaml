@@ -1,0 +1,11 @@
+---
+deprecations:
+  - |
+    The quantum circuit classes :class:`~qiskit.circuit.library.ExactReciprocal`,
+    :class:`~qiskit.circuit.library.LinearAmplitudeFunction`,
+    :class:`~qiskit.circuit.library.QuantumVolume`, and
+    :class:`~qiskit.circuit.library.PhaseOracle` are deprecated.
+    Use :class:`~qiskit.circuit.library.ExactReciprocalGate`,
+    :class:`~qiskit.circuit.library.LinearAmplitudeFunctionGate`,
+    the :func:`~qiskit.circuit.library.quantum_volume` function,
+    and :class:`~qiskit.circuit.library.PhaseOracleGate` instead.
