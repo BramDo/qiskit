@@ -603,6 +603,14 @@ class TestPauliFeatureMap(QiskitTestCase):
 
         self.assertEqual(ref, encoding)
 
+    def test_use_rzz_gate(self):
+        """RZZ gates are used when requested."""
+
+        circuit = zz_feature_map(2, reps=1, use_rzz=True)
+        ops = circuit.count_ops()
+        self.assertIn("rzz", ops)
+        self.assertNotIn("cx", ops)
+
 
 if __name__ == "__main__":
     unittest.main()

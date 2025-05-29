@@ -29,7 +29,7 @@ from ..n_local.n_local import NLocal
 
 
 def _normalize_entanglement(
-    entanglement: str | Mapping[int, Sequence[Sequence[int]]]
+    entanglement: str | Mapping[int, Sequence[Sequence[int]]],
 ) -> str | dict[int, list[tuple[int]]]:
     if isinstance(entanglement, str):
         return entanglement
@@ -53,6 +53,7 @@ def pauli_feature_map(
     data_map_func: Callable[[Parameter], ParameterExpression] | None = None,
     parameter_prefix: str = "x",
     insert_barriers: bool = False,
+    use_phase: bool = True,
     name: str = "PauliFeatureMap",
 ) -> QuantumCircuit:
     r"""The Pauli expansion circuit.
@@ -98,6 +99,11 @@ def pauli_feature_map(
 
     Please refer to :func:`.z_feature_map` for the case of single-qubit Pauli-:math:`Z` rotations
     and to :func:`.zz_feature_map` for the single- and two-qubit Pauli-:math:`Z` rotations.
+
+    The ``use_phase`` option controls how two-qubit Pauli evolutions are
+    synthesized. If ``True`` (the default) the evolution is implemented using
+    CX gates and phase rotations, otherwise native two-qubit rotations such as
+    ``RZZ`` are used where available.
 
     Examples:
 
@@ -160,6 +166,7 @@ def pauli_feature_map(
             data_map_func=data_map_func,
             alpha=alpha,
             insert_barriers=insert_barriers,
+            use_phase=use_phase,
         ),
         name=name,
     )
@@ -177,6 +184,7 @@ def z_feature_map(
     data_map_func: Callable[[Parameter], ParameterExpression] | None = None,
     parameter_prefix: str = "x",
     insert_barriers: bool = False,
+    #use_phase: bool = True, 
     name: str = "ZFeatureMap",
 ) -> QuantumCircuit:
     """The first order Pauli Z-evolution circuit.
@@ -256,6 +264,8 @@ def zz_feature_map(
     data_map_func: Callable[[Parameter], ParameterExpression] | None = None,
     parameter_prefix: str = "x",
     insert_barriers: bool = False,
+    use_rzz: bool = False,
+    use_phase: bool = True,
     name: str = "ZZFeatureMap",
 ) -> QuantumCircuit:
     r"""Second-order Pauli-Z evolution circuit.
@@ -274,6 +284,10 @@ def zz_feature_map(
 
     where :math:`\varphi` is a classical non-linear function, which defaults to :math:`\varphi(x) = x`
     if and :math:`\varphi(x,y) = (\pi - x)(\pi - y)`.
+
+    The ``use_rzz`` option exposes the underlying two-qubit rotation gate. When
+    set to ``True`` the evolution is synthesized with :class:`~qiskit.circuit.library.RZZGate`
+    instead of CX and phase rotations.
 
     Examples:
 
@@ -317,6 +331,7 @@ def zz_feature_map(
         data_map_func=data_map_func,
         parameter_prefix=parameter_prefix,
         insert_barriers=insert_barriers,
+        use_phase=not use_rzz if use_rzz is not None else use_phase,
         name=name,
     )
 
