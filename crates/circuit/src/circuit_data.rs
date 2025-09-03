@@ -1577,13 +1577,15 @@ impl CircuitData {
             )));
         }
         let mut old_table = std::mem::take(&mut self.param_table);
-        self.assign_parameters_inner(
-            py,
-            slice
-                .iter()
-                .zip(old_table.drain_ordered())
-                .map(|(value, (param_ob, uses))| (param_ob, value.clone_ref(py), uses)),
-        )
+        let mut items = Vec::new();
+        let mut mapping = Vec::new();
+        for (value, (param_ob, uses)) in slice.iter().zip(old_table.drain_ordered()) {
+            let val = value.clone_ref(py);
+            mapping.push((param_ob.clone_ref(py), val.clone_ref(py)));
+            items.push((param_ob, val, uses));
+        }
+        self.assign_parameters_inner(py, items)?;
+        self.assign_parameters_blocks(py, &mapping)
     }
 
     /// Assigns parameters to circuit data based on a mapping of `ParameterUuid` : `Param`.
@@ -1595,21 +1597,21 @@ impl CircuitData {
         T: AsRef<Param>,
     {
         let mut items = Vec::new();
+        let mut mapping = Vec::new();
         for (param_uuid, value) in iter {
             // Assume all the Parameters are already in the circuit
             let param_obj = self.get_parameter_by_uuid(param_uuid);
             if let Some(param_obj) = param_obj {
                 // Copy or increase ref_count for Parameter, avoid acquiring the GIL.
-                items.push((
-                    param_obj.clone_ref(py),
-                    value.as_ref().clone_ref(py),
-                    self.param_table.pop(param_uuid)?,
-                ));
+                let val = value.as_ref().clone_ref(py);
+                mapping.push((param_obj.clone_ref(py), val.clone_ref(py)));
+                items.push((param_obj.clone_ref(py), val, self.param_table.pop(param_uuid)?));
             } else {
                 return Err(PyValueError::new_err("An invalid parameter was provided."));
             }
         }
-        self.assign_parameters_inner(py, items)
+        self.assign_parameters_inner(py, items)?;
+        self.assign_parameters_blocks(py, &mapping)
     }
 
     /// Returns an immutable view of the Interner used for Qargs
@@ -1946,6 +1948,37 @@ impl CircuitData {
         let new_index = self.data.len();
         self.data.push(packed);
         self.track_instruction_parameters(py, new_index)
+    }
+
+    /// Recursively assign parameters within any control-flow blocks contained in this circuit.
+    fn assign_parameters_blocks<'py>(&mut self, py: Python<'py>, mapping: &[(Py<PyAny>, Param)]) -> PyResult<()> {
+        if mapping.is_empty() {
+            return Ok(());
+        }
+        let assign_parameters_attr = intern!(py, "assign_parameters");
+        let kwargs = [
+            ("inplace", true),
+            ("flat_input", true),
+            ("strict", false),
+        ]
+        .into_py_dict(py)?;
+        let mapping_dict = mapping.into_py_dict(py)?;
+        for (index, inst) in self.data.iter_mut().enumerate() {
+            if !inst.op.control_flow() {
+                continue;
+            }
+            for param in inst.params_mut() {
+                if let Param::Obj(obj) = param {
+                    let obj = obj.bind_borrowed(py);
+                    if obj.is_instance(QUANTUM_CIRCUIT.get_bound(py))? {
+                        obj.call_method(assign_parameters_attr, (mapping_dict.clone_ref(py),), Some(kwargs))?;
+                    }
+                }
+            }
+            self.untrack_instruction_parameters(py, index)?;
+            self.track_instruction_parameters(py, index)?;
+        }
+        Ok(())
     }
 
     /// Add a param to the current global phase of the circuit

@@ -4724,6 +4724,9 @@ class QuantumCircuit:
 
         The values can be assigned to the current circuit object or to a copy of it.
 
+        Parameter binding recurses into any control-flow operations in the circuit,
+        such as bodies of :class:`.ForLoopOp` or :class:`.IfElseOp` blocks.
+
         .. note::
             When ``parameters`` is given as a mapping, it is permissible to have keys that are
             strings of the parameter names; these will be looked up using :meth:`get_parameter`.

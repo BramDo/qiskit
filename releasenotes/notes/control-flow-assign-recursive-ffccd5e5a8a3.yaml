@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    Parameter assignment now recurses into the bodies of control-flow operations
+    such as :class:`~.ForLoopOp` and :class:`~.IfElseOp`.  Parameters used only
+    inside these blocks can be bound directly from the parent circuit.

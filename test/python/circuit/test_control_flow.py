@@ -1041,6 +1041,30 @@ class TestAddingControlFlowOperations(QiskitTestCase):
             expected.box(body.assign_parameters({x: math.pi}), [0], [])
             self.assertEqual(assigned, expected)
 
+    def test_nested_for_loop_parameter_assignment(self):
+        """Parameters inside nested for_loop blocks should be bound by the parent."""
+        x = Parameter("x")
+
+        inner = QuantumCircuit(1)
+        inner.rx(x, 0)
+
+        middle = QuantumCircuit(1)
+        middle.for_loop(range(2), None, inner.copy(), [0], [])
+
+        outer = QuantumCircuit(1)
+        outer.for_loop(range(3), None, middle.copy(), [0], [])
+
+        bound = outer.assign_parameters({x: math.pi})
+        self.assertEqual(set(bound.parameters), set())
+
+        expected_inner = inner.assign_parameters({x: math.pi})
+        expected_middle = QuantumCircuit(1)
+        expected_middle.for_loop(range(2), None, expected_inner, [0], [])
+        expected_outer = QuantumCircuit(1)
+        expected_outer.for_loop(range(3), None, expected_middle, [0], [])
+
+        self.assertEqual(bound, expected_outer)
+
     def test_can_add_op_with_captures_of_inputs(self):
         """Test circuit methods can capture input variables."""
         outer = QuantumCircuit(1, 1)
