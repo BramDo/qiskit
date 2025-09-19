@@ -53,6 +53,16 @@ Optional Dependency Checkers
 ============================
 
 .. automodule:: qiskit.utils.optionals
+
+Syllable tree helper
+====================
+
+.. autoclass:: SyllableTree
+    :members: render, to_dict, to_json
+
+.. autofunction:: build_syllable_tree
+.. autofunction:: run_syllable_tree_app
+.. autofunction:: syllabify
 """
 
 from .deprecation import (
@@ -63,6 +73,15 @@ from .deprecation import (
 from .units import apply_prefix, detach_prefix
 from .classtools import wrap_method
 from .lazy_tester import LazyDependencyManager, LazyImportTester, LazySubprocessTester
+from .syllable_tree import (
+    SyllableTree,
+    TreeNode,
+    build_syllable_tree,
+    parse_syllable_hint,
+    run_syllable_tree_app,
+    split_onset_nucleus_coda,
+    syllabify,
+)
 
 from . import optionals
 
@@ -78,13 +97,20 @@ __all__ = [
     "LazyDependencyManager",
     "LazyImportTester",
     "LazySubprocessTester",
+    "SyllableTree",
+    "TreeNode",
     "add_deprecation_to_docstring",
     "apply_prefix",
+    "build_syllable_tree",
     "default_num_processes",
     "deprecate_arg",
     "deprecate_func",
     "is_main_process",
     "local_hardware_info",
     "parallel_map",
+    "parse_syllable_hint",
+    "run_syllable_tree_app",
     "should_run_in_parallel",
+    "split_onset_nucleus_coda",
+    "syllabify",
 ]
